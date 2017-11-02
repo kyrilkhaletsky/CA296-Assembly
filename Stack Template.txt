@@ -1,0 +1,63 @@
+Iterating through a stack template.
+
+.data
+integer		DWORD	0
+.code
+	main:nop
+
+		mov ebp,esp				;;set esp to ebp
+
+readIn:
+		invoke readInteger
+		mov integer,eax			;;move eax into integer
+		mov eax,esp				;;move stack pointer into eax
+
+checkstack:
+		cmp eax,ebp				;;compare stack and base pointers
+		je	push_				;;if != then continue, else jmp add stack
+								;;when == then it reached end of stack.
+		
+		
+		;;EXAMPLE CALCULATION check duplicate
+		mov ebx,integer
+		cmp [eax],ebx			;;[eax] contains current value on stack
+		je exit
+		
+		add eax,4				;;iterate through the stack
+		jmp checkstack			;;jmp to next value in stack
+
+push_:
+		mov eax,integer			;;push eax into stack
+		push eax
+		jmp readIn
+
+exit:
+		invoke ExitProcess,0
+	end main
+
+Another Stack template
+	
+.code
+	main:nop
+		
+		mov ebp,esp
+
+readNextValue:
+		invoke readInteger		;;read in integer
+		cmp eax,0				;;read until int < 0
+		jl	printLis
+
+		push eax				;;push onto stack
+		jmp readNextValue		;;jmp back to loop
+
+printLis:
+		cmp esp,ebp				;;continue until stack pointer
+		je	printListEnd			== base pointer (end)
+
+		pop ebx					;;pop current value into ebx
+		add total, ebx			;;CALCULATION WITH EBX here
+		jmp printLis
+
+printListEnd:
+	invoke ExitProcess,0
+end main

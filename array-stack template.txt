@@ -1,0 +1,63 @@
+Array on a stack function template.
+
+
+EXTERNDEF		sum:NEAR
+.data
+array			DWORD	6 DUP(3,1,2,5,4,2)
+len				DWORD	6
+
+.code
+	main:nop
+		invoke writeArray, ADDR array, 6
+		
+		push OFFSET array			;;ebp+12
+		push len					;;last thing you push is ebp+8
+
+		call sum
+		
+		invoke writeArray, ADDR array, 6
+		invoke ExitProcess,0
+
+	end main
+
+EXTERNDEF		sum:NEAR
+
+.data
+
+.code
+
+	sum:
+		push ebp					;;set stack pointer to base pointer
+		mov ebp, esp
+
+		mov eax, 0					;;set the array pointer to 0
+		mov [ebp-4], eax			;;store 0 in ebp-4
+
+                                    ;;adding another pointer would be ebp-8 etc
+		
+		::INSERT EXTRA POINTERS ETC HERE::
+		
+		
+		loopy:
+			mov eax, [ebp - 4]		;;loop
+			cmp eax, [ebp + 8]		;;compare to the len array (stored in ebp+8)
+			je exit					;;exit when pointer == len of array(ebp+8)
+
+				mov eax, [ebp - 4]	;;move pointer in eax
+				sal eax, 2			;;multiply by 4(next iteration 4>8>12>16 etc)
+				add eax, [ebp + 12]	;;add array(stored in ebp+12) into eax
+				mov ecx, [eax]		;;mov element eax into ecx
+
+				
+				::INSERT CALCULATION ETC HERE::
+				
+				
+			inc dword ptr [ebp-4]	;;inc the pointer, stored in ebp-4
+			jmp loopy
+
+	exit:
+		mov eax, [ebp+12]			;;mov array into eax, what you are returning.
+		pop ebp
+		ret 4						;;return value
+
+end sum

@@ -1,0 +1,50 @@
+Recursive Template for going through an array
+
+EXTERNDEF	max:NEAR
+.data
+array	DWORD	1, 2, 5, 3, 4, -5
+
+.code
+	main:nop
+		push 6							;;Length ebp+12
+		push offset array				;;array ebp+8
+		call max
+		invoke writeInteger, eax
+		invoke ExitProcess,0
+
+	end main
+
+EXTERNDEF	max:NEAR
+.data
+.code
+	max:
+		push ebp
+		mov ebp, esp
+		sub esp, 4						;;sub 4 from esp so the value
+											does not reset when push is used
+		mov ebx, [EBP+8]				;;mov array into ebx
+		mov eax, [ebx+0*4]				;;mov first value into eax
+		mov [EBP-4], eax				;;mov that value into ebp-4
+
+		cmp DWORD PTR [EBP+12], 1		;;cmp lenght to 1 (base case)
+		je done_
+
+		mov ecx, [EBP+12]				;;decrement lenght
+		dec ecx
+		push ecx
+
+		add ebx, 4						;;increment through array
+		push ebx
+
+		call max
+		
+		;;DWORD PTR [EBP-4] contains the current value.
+		;;CALCULATION GOES HERE
+
+		;;also add final value into eax or whatever
+		
+		done_:
+		mov esp, ebp
+		pop ebp
+		ret 8
+	end

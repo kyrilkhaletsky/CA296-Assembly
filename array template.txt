@@ -1,0 +1,32 @@
+Array Template
+
+.data
+array	DWORD	10	DUP(0)
+i		DWORD	0
+len		DWORD	10
+.code
+	main:nop
+
+		invoke fillWithRandomValues, ADDR array, 10, 20
+		invoke writeArray, ADDR array, 10
+		
+		mov ecx, len
+		
+	loopy:
+		cmp i, ecx				;;compare i and len(array)
+		je exit						jmp when ==
+		mov eax, 4				;;mov 4 into eax, and multiply by i
+		mul i							i is (0>4>8>12>16)
+		add eax, offset array	;;add array into eax
+		mov ebx, [eax]			;;move EAXth element into ebx
+			
+		;;CALCULATION WITH EBX GOES HERE;;
+		
+		inc i					;;inc i
+		jmp loopy
+	
+	
+	exit:
+
+		invoke ExitProcess,0
+	end main
